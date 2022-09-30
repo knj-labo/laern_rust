@@ -11,8 +11,35 @@ struct Arguments {
 
 fn main() {
     let args = parse_args();
-    println!("{:?}", args);
+    // println!("{:?}", args);
+    let data = match fs::read_to_string(&args.filename) {
+        Ok(v) => v,
+        Err(e) => {
+            eprintln!("{} faild to read from file '{}':{:?}",
+                      "Error".red().bold(), args.filename, e);
+            std::process::exit(1);
+        }
+    };
+
+    let replaced_data = match replace(&args.target, &args.replacement, &data) {
+        Ok(v) => v,
+        Err(e) => {
+            eprintln!("{} faild to replace text '{}':{:?}",
+                      "Error".red().bold(), args.filename, e);
+            std::process::exit(1);
+        }
+    };
+
+    match fs::write(&args.output, &replaced_data) {
+        Ok(v) => {v},
+        Err(e) => {
+            eprintln!("{} faild to write to file '{}':{:?}",
+                      "Error".red().bold(), args.filename, e);
+            std::process::exit(1);
+        }
+    };
 }
+
 
 fn parse_args() -> Arguments{
     let args: Vec<String> = env::args().skip(1).collect();
