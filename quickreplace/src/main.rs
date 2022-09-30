@@ -59,6 +59,11 @@ fn parse_args() -> Arguments{
     }
 }
 
+fn replace(target: &str, replacement: &str,text: &str) -> Result<String , regex::Error> {
+    let regex = Regex::new(target)?;
+    Ok(regex.replace_all(text, replacement).to_string())
+}
+
 fn print_usage() {
     eprintln!("{} - change occurence of one string into another",
               "quickreplace".green());
