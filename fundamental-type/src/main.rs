@@ -16,3 +16,9 @@ fn main() {
     assert_eq!((-4_i32).abs(), 4);              // absolute value
     assert_eq!((0b101101_u8).count_one(), 4);   // population count
 }
+
+fn print(n: &[f64]) {
+    for element in n {
+        println!("{}", elt);
+    }
+}
