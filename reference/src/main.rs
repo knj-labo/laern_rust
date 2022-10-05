@@ -9,10 +9,10 @@ fn main() {
     table.insert("Caravaggio".to_string(),
                  vec!["The Musicians".to_string(),
                       "The Calling of St.Matthew".to_string()]);
-    show(table)
+    show(&table)
 }
 
-fn show(table: Table) {
+fn show(table: &Table) {
     for(artist, works) in table {
         println!("works by {}:", artist);
         for work in works {
