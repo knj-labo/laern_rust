@@ -6,4 +6,12 @@ async fn main() {
         response.status(),
         response.headers()
     );
+
+    let body = response.text().await.unwrap();
+
+    let num_lines = 10;
+    println!("First {num_lines} lines of body:");
+    for line in body.lines().take(num_lines) {
+        println!("{line}");
+    }
 }
