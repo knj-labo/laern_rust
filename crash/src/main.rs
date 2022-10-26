@@ -8,4 +8,7 @@ async fn main() {
         response.status(),
         response.headers()
     );
+
+    let body = response.body();
+    println!("Body: {:?}", body);
 }
