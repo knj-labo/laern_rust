@@ -1,5 +1,3 @@
-use futures::TryStreamExt;
-
 #[tokio::main]
 async fn main() {
     let response = hyper::Client::new()
@@ -7,10 +5,13 @@ async fn main() {
         .await
         .unwrap();
 
-    let mut body = response.into_body();
-
-    // 1度に1つのバッファを取得しながらデータを polling することができる。
-    while let Some(buffer) = body.try_next().await.unwrap() {
-        println!("Read {} bytes", buffer.len());
-    }
+    // String::from_utf8 can fail because the body might not actually be valid UTF-8, it could just be arbitrary binary spaghetti.
+    let body = String::from_utf8(
+        hyper::body::to_bytes(response.into_body())
+            .await
+            .unwrap()
+            .to_vec(),
+    )
+        .unwrap();
+    println!("response body: {body}");
 }
