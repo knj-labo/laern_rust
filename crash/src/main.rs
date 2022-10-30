@@ -5,16 +5,24 @@ use rustls::{ClientConfig, KeyLogFile};
 
 #[tokio::main]
 async fn main() {
-    let conn = hyper::HttpsConnectorBuilder::new()
+    let mut client_config = ClientConfig::builder()
+        .with_safe_defaults()
         .with_native_roots()
+        .with_no_client_auth();
+
+    // this is the fun option
+    client_config.key_log = Arc::new(KeyLogFile::new());
+
+    let conn = hyper_rustls::HttpsConnectorBuilder::new()
+        .with_tls_config(client_config)
         .https_or_http()
         .enable_http1()
         .build();
 
-    let clinet = hyper::Client::builder().build::<_, hyper::Body>(conn);
+    let client = hyper::Client::builder().build::<_, hyper::Body>(conn);
 
-    let response = clinet
-        .get("http://example.org".parse().unwrap())
+    let response = client
+        .get("https://example.org".parse().unwrap())
         .await
         .unwrap();
 
