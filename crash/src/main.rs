@@ -1,6 +1,14 @@
 #[tokio::main]
 async fn main() {
-    let response = hyper::Client::new()
+    let conn = hyper::HttpsConnectorBuilder::new()
+        .with_native_roots()
+        .https_or_http()
+        .enable_http1()
+        .build();
+
+    let clinet = hyper::Client::builder().build::<_, hyper::Body>(conn);
+
+    let response = clinet
         .get("http://example.org".parse().unwrap())
         .await
         .unwrap();
