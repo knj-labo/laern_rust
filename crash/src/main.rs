@@ -1,3 +1,8 @@
+use std::sync::Arc;
+
+use hyper_rustls::ConfigBuilderExt;
+use rustls::{ClientConfig, KeyLogFile};
+
 #[tokio::main]
 async fn main() {
     let conn = hyper::HttpsConnectorBuilder::new()

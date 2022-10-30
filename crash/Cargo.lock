@@ -68,6 +68,7 @@ dependencies = [
  "hyper",
  "hyper-rustls",
  "reqwest",
+ "rustls",
  "tokio",
 ]
 
