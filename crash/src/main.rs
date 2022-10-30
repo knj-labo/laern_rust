@@ -1,38 +1,17 @@
-use std::sync::Arc;
+use std::{str::FromStr, sync::Arc};
 
-use hyper_rustls::ConfigBuilderExt;
-use rustls::{ClientConfig, KeyLogFile};
+use color_eyre::eyre::eyre;
+use nom::Offset;
+use rustls::{Certificate, ClientConfig, KeyLogFile, RootCertStore};
+use tokio::{
+    io::{AsyncReadExt, AsyncWriteExt},
+    net::TcpStream,
+};
+use tracing::info;
+use tracing_subscriber::{filter::targets::Targets, layer::SubscriberExt, util::SubscriberInitExt};
+
+mod http11;
 
 #[tokio::main]
 async fn main() {
-    let mut client_config = ClientConfig::builder()
-        .with_safe_defaults()
-        .with_native_roots()
-        .with_no_client_auth();
-
-    // this is the fun option
-    client_config.key_log = Arc::new(KeyLogFile::new());
-
-    let conn = hyper_rustls::HttpsConnectorBuilder::new()
-        .with_tls_config(client_config)
-        .https_or_http()
-        .enable_http1()
-        .build();
-
-    let client = hyper::Client::builder().build::<_, hyper::Body>(conn);
-
-    let response = client
-        .get("https://example.org".parse().unwrap())
-        .await
-        .unwrap();
-
-    // String::from_utf8 can fail because the body might not actually be valid UTF-8, it could just be arbitrary binary spaghetti.
-    let body = String::from_utf8(
-        hyper::body::to_bytes(response.into_body())
-            .await
-            .unwrap()
-            .to_vec(),
-    )
-        .unwrap();
-    println!("response body: {body}");
 }
