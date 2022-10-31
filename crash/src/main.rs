@@ -17,7 +17,7 @@ async fn main() -> color_eyre::Result<()> {
         .with(format_layer)
         .init();
 
-    info!("Setting up TLS root certificate store");
+    info!("Setting up TLS");
     let mut root_store = RootCertStore::empty();
     for cert in rustls_native_certs::load_native_certs()? {
         root_store.add(&Certificate(cert.0))?;
@@ -29,24 +29,24 @@ async fn main() -> color_eyre::Result<()> {
         .with_no_client_auth();
     client_config.key_log = Arc::new(KeyLogFile::new());
 
-    let connector = hyper_rustls::HttpsConnectorBuilder::new()
-        .with_tls_config(client_config)
-        .https_only()
-        .enable_http2()
-        .build();
+    let connector = tokio_rustls::TlsConnector::from(Arc::new(client_config));
 
-    let client = Client::builder()
-        .http2_only(true)
-        .build::<_, hyper::Body>(connector);
+    let addr = "example.org::443"
+        .to_socket_addrs()?
+        .next()
+        .ok_or_else(|| eyre!("Failed to resolve address for example.org:443"))?;
 
-    let req = Request::get("https://example.org").body(hyper::Body::empty())?;
-    info!("Performing HTTP/2 request...");
-    let res = client.request(req).await?;
-    info!("Response header: {:?}", res);
+    info!("Establishing TCP connection...");
+    let stream = TcpStream::connect(addr).await?;
 
-    info!("Reading response body...");
-    let body = hyper::body::to_bytes(res.into_body()).await?;
-    info!("Response body is {} bytes", body.len());
+    info!("Establishing TLS session...");
+    let stream = connector.connect("example.org".try_into()?, stream).await?;
+
+    info!("Establishing HTTP/2 connection...");
+    let (_send_req, conn) = h2::client::handshake(stream).await?;
+    tokio::spawn(conn);
+
+    info!("Now what?");
 
     Ok(())
 }
