@@ -1,9 +1,14 @@
 use std::io;
+// Rngトレイトは乱数生成器が実装すべきメソッドを定義
+use rand::Rng;
 
 fn main() {
 
     // println! は画面に文字列を表示するマクロ
     println!("Guess the number!"); // 数を当ててごらん
+    // 乱数生成して 開始〜終了
+    let secret_number = rand::thread_rng().gen_range(1..101);
+    println!("The secret number is: {}", secret_number);    //秘密の数字は次の通り: {}
 
     println!("Please input your guess."); // ほら、予想を入力してね
 
