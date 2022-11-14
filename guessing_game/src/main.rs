@@ -1,4 +1,5 @@
 use std::io;
+use std::cmp::Ordering;
 // Rngトレイトは乱数生成器が実装すべきメソッドを定義
 use rand::Rng;
 
@@ -25,5 +26,16 @@ fn main() {
         .read_line(&mut guess)
         .expect("Failed to read line");     // 行の読み込みに失敗しました
 
+    // Rustではguessの前の値を新しい値で覆い隠す（shadowする）ことが許されているのです。
+    let guess: u32 = guess.trim().parse().expect("Please type a number!"); // 数値を入力してください
     println!("You guessed: {}", guess);     // 次のように予想しました: {}
+
+    // match式は複数のアーム（腕）で構成されます。
+    // 各アームはマッチさせるパターン
+    // matchに与えられた値がそのアームのパターンにマッチしたときに実行されるコードで構成。
+    match guess.cmp(&secret_number) {
+        Ordering::Less => println!("Too small!"),
+        Ordering::Greater => println!("Too big!"),
+        Ordering::Equal => println!("You win!"),
+    }
 }
