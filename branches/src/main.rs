@@ -1,27 +1,16 @@
+
+// &s1をcalcuate_lengthに渡し、その定義では、String型ではなく、&Stringを受け取っている
+// &記号が参照
 fn main() {
-    let number = 3;
+  let s1 = String::from("hello");
 
-    if number < 5 {
-        println!("condition was true");       // 条件は真でした
-    } else {
-        println!("condition was false");      // 条件は偽でした
-    }
+  let len = calculate_length(&s1);
 
-    if number != 0 {
-        println!("number was something other than zero");   // 数値は0以外の何かです
-    }
+  // '{}'の長さは、{}です
+  println!("The length of '{}' is {}.", s1, len);
+}
 
-    if number % 4 == 0 {
-        // 数値は4で割り切れます
-        println!("number is divisible by 4");
-    } else if number % 3 == 0 {
-        // 数値は3で割り切れます
-        println!("number is divisible by 3");
-    } else if number % 2 == 0 {
-        // 数値は2で割り切れます
-        println!("number is divisible by 2");
-    } else {
-        // 数値は4、3、2で割り切れません
-        println!("number is not divisible by 4, 3, or 2");
-    }
+
+fn calculate_length(s: &String) -> usize {
+    s.len()
 }
