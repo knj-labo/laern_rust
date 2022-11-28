@@ -1,0 +1,9 @@
+[package]
+name = "server"
+version = "0.1.0"
+edition = "2021"
+authors = ["Kenji Tomita"]
+
+# @see https://doc.rust-lang.org/cargo/reference/manifest.html
+[dependencies]
+actix-rt = "2.7.0"
