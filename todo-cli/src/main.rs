@@ -4,13 +4,15 @@ fn main() {
 
     println!("{:?}, {:?}", action, item);
 
+    // instantiate a struct, binding it as mutable.
     let mut todo = Todo {
         map:HashMap::new(),
     };
 
     if action == "add" {
         todo.insert(item);
-        match todo.save {
+        // match the Result returned from the save function and print a message on screen for both cases.
+        match todo.save() {
             Ok(_) => println!("todo saved"),
             Err(why) => println!("An error occurred: {}", why),
         }
