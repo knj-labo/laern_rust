@@ -19,7 +19,9 @@ fn main() {
     }
 }
 
+use std::io::Read;
 use std::collections::HashMap;
+use std::str::FromStr;
 
 struct Todo {
     // use rust built in HashMap to store key - val pairs
