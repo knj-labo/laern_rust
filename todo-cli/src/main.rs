@@ -27,14 +27,25 @@ struct Todo {
 }
 
 impl Todo {
+    // return Todo struct or io:Error
     fn new() -> Result<Todo, std::io::Error> {
+        // see https://doc.rust-lang.org/std/fs/struct.OpenOptions.html
+        // create(true) will create the file if it's not already present
         let mut f = std::fs::OpenOptions::new()
             .write(true)
             .create(true)
             .read(true)
             .open("db.txt")?;
         let mut content = String::new();
+
+        // reads all the bytes in the file
         f.read_to_string(&mut content)?;
+
+        // binding a map variable map: HashMap
+        // will split our lines
+        // collect::<Vec<&str>>()  as de scribed in the documentation
+        // map(|v|(v[0], v[1])) transform it into a tuple for convenience
+        // map(|(k,v)| (String::from(k), bool::from_str(v).unwrap()) convert the two elements of the tuple into a String
         let map: HashMap<String, bool> = content
             .lines()
             .map(|line| line.splitn(2, '\t').collect::<Vec<&str>>())
